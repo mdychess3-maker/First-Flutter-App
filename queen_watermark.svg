@@ -1,0 +1,31 @@
+<svg width="200" height="200" viewBox="0 0 200 200" xmlns="http://www.w3.org/2000/svg">
+  <g fill="#D4AF37">
+    <!-- base band -->
+    <polygon points="30,150 170,150 170,168 30,168" />
+    <!-- crown body with 5 points -->
+    <polygon points="
+      30,150
+      44,100
+      58,130
+      72,80
+      86,130
+      100,64
+      114,130
+      128,80
+      142,130
+      156,100
+      170,150
+    " />
+    <!-- orbs -->
+    <circle cx="44" cy="92" r="7" />
+    <circle cx="72" cy="72" r="7" />
+    <circle cx="100" cy="56" r="8" />
+    <circle cx="128" cy="72" r="7" />
+    <circle cx="156" cy="92" r="7" />
+  </g>
+  <g fill="#080808">
+    <circle cx="65" cy="158" r="3.2" />
+    <circle cx="100" cy="158" r="3.2" />
+    <circle cx="135" cy="158" r="3.2" />
+  </g>
+</svg>

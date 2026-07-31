@@ -1,0 +1,66 @@
+workflows:
+  mdy-chess-android:
+    name: MDY Chess - Android APK
+    max_build_duration: 30
+    instance_type: linux_x2
+    environment:
+      flutter: 3.24.5
+      java: 17
+      groups:
+        # Create these groups in Codemagic UI (Team settings > Environment
+        # variable groups) and attach them here. Nothing secret is stored
+        # in this file. See README.md "Environment Variables" for the
+        # full list and whether each one is required.
+        - mdy_signing        # MDY_KEYSTORE_PATH, MDY_KEYSTORE_PASSWORD, MDY_KEY_ALIAS, MDY_KEY_PASSWORD
+        - mdy_content         # YOUTUBE_CHANNEL_URL, DISCORD_INVITE_URL, DISCORD_ID (optional overrides)
+      vars:
+        PACKAGE_NAME: "com.mdychess.mdy"
+
+    triggering:
+      events:
+        - push
+        - tag
+      branch_patterns:
+        - pattern: main
+          include: true
+
+    scripts:
+      - name: Set Flutter config
+        script: |
+          flutter config --no-analytics
+          flutter --version
+
+      - name: Get Flutter packages
+        script: flutter pub get
+
+      - name: Generate launcher icons
+        script: dart run flutter_launcher_icons
+
+      - name: Generate native splash screen
+        script: dart run flutter_native_splash:create
+
+      - name: Flutter analyze
+        script: flutter analyze --no-fatal-infos
+
+      - name: Flutter unit / widget tests
+        script: flutter test
+
+      - name: Build release APK
+        script: |
+          flutter build apk --release \
+            --dart-define=YOUTUBE_CHANNEL_URL="${YOUTUBE_CHANNEL_URL:-https://youtube.com/@mdy_chess}" \
+            --dart-define=DISCORD_INVITE_URL="${DISCORD_INVITE_URL:-https://discord.gg/T5ssgD2q2}" \
+            --dart-define=DISCORD_ID="${DISCORD_ID:-MDYChess}"
+
+    artifacts:
+      - build/app/outputs/flutter-apk/*.apk
+      - build/app/outputs/mapping/release/mapping.txt
+      - flutter_drive.log
+
+    publishing:
+      email:
+        recipients:
+          - your-email@example.com
+        notify:
+          success: true
+          failure: true

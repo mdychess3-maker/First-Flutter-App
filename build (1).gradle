@@ -1,0 +1,97 @@
+plugins {
+    id "com.android.application"
+    id "kotlin-android"
+    id "dev.flutter.flutter-gradle-plugin"
+}
+
+def localProperties = new Properties()
+def localPropertiesFile = rootProject.file('local.properties')
+if (localPropertiesFile.exists()) {
+    localPropertiesFile.withReader('UTF-8') { reader ->
+        localProperties.load(reader)
+    }
+}
+
+def flutterVersionCode = localProperties.getProperty('flutter.versionCode') ?: '1'
+def flutterVersionName = localProperties.getProperty('flutter.versionName') ?: '1.0.0'
+
+// ---------------------------------------------------------------------------
+// Release signing is resolved from environment variables ONLY.
+// Nothing here is hardcoded. See README.md "Environment Variables" section.
+// If the variables are absent (e.g. a local debug build), the release build
+// type safely falls back to the Android debug keystore so `flutter build apk`
+// keeps working out of the box.
+// ---------------------------------------------------------------------------
+def keystorePropsFile = rootProject.file('key.properties')
+def keystoreProps = new Properties()
+if (keystorePropsFile.exists()) {
+    keystoreProps.load(new FileInputStream(keystorePropsFile))
+}
+
+String envOrProp(String envName, String propName) {
+    return System.getenv(envName) ?: keystoreProps.getProperty(propName)
+}
+
+def storeFilePath = envOrProp('MDY_KEYSTORE_PATH', 'storeFile')
+def storePasswordVal = envOrProp('MDY_KEYSTORE_PASSWORD', 'storePassword')
+def keyAliasVal = envOrProp('MDY_KEY_ALIAS', 'keyAlias')
+def keyPasswordVal = envOrProp('MDY_KEY_PASSWORD', 'keyPassword')
+def hasReleaseSigning = storeFilePath && storePasswordVal && keyAliasVal && keyPasswordVal
+
+android {
+    namespace "com.mdychess.mdy"
+    compileSdk 35
+    ndkVersion flutter.ndkVersion
+
+    compileOptions {
+        sourceCompatibility JavaVersion.VERSION_17
+        targetCompatibility JavaVersion.VERSION_17
+    }
+
+    kotlinOptions {
+        jvmTarget = "17"
+    }
+
+    defaultConfig {
+        applicationId "com.mdychess.mdy"
+        minSdk 21
+        targetSdk 35
+        versionCode flutterVersionCode.toInteger()
+        versionName flutterVersionName
+    }
+
+    signingConfigs {
+        release {
+            if (hasReleaseSigning) {
+                storeFile file(storeFilePath)
+                storePassword storePasswordVal
+                keyAlias keyAliasVal
+                keyPassword keyPasswordVal
+            }
+        }
+    }
+
+    buildTypes {
+        release {
+            signingConfig hasReleaseSigning ? signingConfigs.release : signingConfigs.debug
+            minifyEnabled true
+            shrinkResources true
+            proguardFiles getDefaultProguardFile('proguard-android-optimize.txt'), 'proguard-rules.pro'
+        }
+        debug {
+            signingConfig signingConfigs.debug
+        }
+    }
+
+    buildFeatures {
+        buildConfig true
+    }
+}
+
+flutter {
+    source '../..'
+}
+
+dependencies {
+    testImplementation 'junit:junit:4.13.2'
+}

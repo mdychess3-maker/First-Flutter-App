@@ -1,0 +1,76 @@
+name: mdy_chess
+description: "MDY Chess — official portfolio app for MDY Chess, a cinematic chess video editor."
+publish_to: 'none'
+version: 1.0.0+1
+
+environment:
+  sdk: '>=3.5.0 <4.0.0'
+  flutter: '>=3.24.5'
+
+dependencies:
+  flutter:
+    sdk: flutter
+
+  # State management
+  flutter_riverpod: 2.6.1
+
+  # Typography
+  google_fonts: 6.3.2
+
+  # Animation
+  flutter_animate: 4.5.2
+
+  # Icons (no CDN, no lucide_icons package — flutter_lucide only)
+  flutter_lucide: 1.11.0
+  cupertino_icons: 1.0.8
+
+  # Vector assets
+  flutter_svg: 2.0.10+1
+
+  # Video (YouTube portfolio playback, native player controls, no webview)
+  youtube_player_flutter: 9.1.3
+
+  # External links (Discord / YouTube) + clipboard support
+  url_launcher: 6.3.1
+
+  # Local persistence (theme preference)
+  shared_preferences: 2.3.3
+
+dev_dependencies:
+  flutter_test:
+    sdk: flutter
+  flutter_lints: 4.0.0
+  flutter_launcher_icons: 0.14.1
+  flutter_native_splash: 2.4.3
+
+flutter:
+  uses-material-design: true
+
+  assets:
+    - assets/images/
+    - assets/icons/
+
+# ---------------------------------------------------------------------------
+# App icon generation config (run: dart run flutter_launcher_icons)
+# ---------------------------------------------------------------------------
+flutter_launcher_icons:
+  android: true
+  ios: false
+  image_path: "assets/images/app_icon.png"
+  adaptive_icon_background: "#080808"
+  adaptive_icon_foreground: "assets/images/app_icon_fg.png"
+  min_sdk_android: 21
+
+# ---------------------------------------------------------------------------
+# Native splash screen config (run: dart run flutter_native_splash:create)
+# ---------------------------------------------------------------------------
+flutter_native_splash:
+  color: "#080808"
+  image: assets/images/splash_icon.png
+  color_dark: "#080808"
+  image_dark: assets/images/splash_icon.png
+  android_12:
+    color: "#080808"
+    image: assets/images/splash_icon.png
+    icon_background_color: "#080808"
+  fullscreen: true
